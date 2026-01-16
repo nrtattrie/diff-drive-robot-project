@@ -1,19 +1,15 @@
 # Learning Log
 
-A record of daily progress, learnings, and challenges throughout the project.
+A record of progress, learnings, resources used, and challenges throughout the project.
 
 ---
 
-## Week 1: January 13-19, 2026
-
-### Day 1 - Friday, January 17, 2026
-
-**Hours Worked:** 8 hours
+### Day 1 - Friday, January 16, 2026
 
 **What I Did:**
 - Ordered NVMe SSD for Raspberry Pi 5 ($38)
 - Installed VS Code with Robot Developer Extensions for ROS 2
-- Watched Articulated Robotics videos 1-6 (ROS 2 intro series)
+- Watched Articulated Robotics videos 1-6 (ROS 2 intro series) (https://www.youtube.com/@ArticulatedRobotics)
 - Read ROS 2 core concepts documentation (nodes, topics, services)
 - Created GitHub repository with proper structure
 - Organized project files (GitHub, Google Drive, OneNote)
@@ -41,70 +37,3 @@ A record of daily progress, learnings, and challenges throughout the project.
 - Install ROS 2 Humble
 - Complete first 4 ROS 2 tutorials
 
-**Mood:** 😊 Excited and organized!
-
----
-
-### Day 2 - Saturday, January 18, 2026
-
-**Hours Worked:** [TBD]
-
-**What I Did:**
-- [Will fill in tomorrow]
-
-**What I Learned:**
-- [Will fill in tomorrow]
-
----
-
-## Week 2: January 20-26, 2026
-
-*[Will fill in as I progress]*
-
----
-
-## Templates for Future Entries
-
-### Daily Entry Template
-```
-### Day X - [Date]
-
-**Hours Worked:** X hours
-
-**What I Did:**
-- Task 1
-- Task 2
-
-**What I Learned:**
-- Learning 1
-- Learning 2
-
-**Challenges/Questions:**
-- Challenge 1
-- Question 1
-
-**Tomorrow's Plan:**
-- Next task
-
-**Mood:** [emoji + description]
-```
-
----
-
-## Weekly Summary Template
-```
-## Week X: [Date Range]
-
-**Total Hours:** X hours
-**Major Accomplishments:**
-- Accomplishment 1
-
-**Skills Developed:**
-- Skill 1
-
-**Blockers Resolved:**
-- Blocker 1
-
-**Next Week's Goals:**
-- Goal 1
-```
