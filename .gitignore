@@ -1,0 +1,57 @@
+# ROS 2
+build/
+install/
+log/
+*.pyc
+__pycache__/
+*.egg-info/
+
+# Python
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+
+# C++
+*.o
+*.so
+*.out
+*.exe
+
+# SolidWorks (don't commit, keep in Google Drive)
+*.SLDPRT
+*.SLDASM
+*.SLDDRW
+~$*.SLD*
+*.SLDPRT.bak
+*.SLDASM.bak
+
+# CAD cache
+.~lock.*
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs
+*.log
+
+# Large files (use Google Drive instead)
+*.mp4
+*.mov
+*.avi
+*.zip
+*.tar.gz
+
+# Temporary
+tmp/
+temp/
