@@ -1,6 +1,6 @@
 # Bill of Materials
 
-Last Updated: 2026-01-17
+Last Updated: 2026-01-18
 
 ## Summary
 
@@ -20,7 +20,7 @@ Last Updated: 2026-01-17
 |-----------|-----|--------|------|----------|-------|-------|
 | Raspberry Pi 5 (8GB) | 1 | ✅ Have | $80 | Desk | 2.4GHz quad-core Cortex-A76 | Main computer |
 | M.2 HAT | 1 | ✅ Have | $24 | Desk | PCIe Gen 2 ×1 | For NVMe SSD |
-| NVMe SSD (256GB) | 1 | 🚚 Ordered | $38 | In transit | Crucial P3 Plus | Ubuntu boot drive |
+| NVMe SSD (256GB) | 1 | 🚚 Ordered | $89 | In transit | Raspberry Pi SSD | Ubuntu boot drive |
 | Active Cooler | 1 | ✅ Have | $12 | Desk | PWM fan + heatsink | Thermal management |
 | Arduino Mega 2560 | 1 | ✅ Have | $0 | Desk | ATmega2560 | Motor controller |
 | ELEGOO Sensor Kit | 1 | ✅ Have | $66 | Desk | Multiple sensors | Ultrasonic, buttons, LEDs |
@@ -33,15 +33,15 @@ Last Updated: 2026-01-17
 
 | Item | Qty | Priority | Est. Cost | Vendor | Part Number | Purpose |
 |------|-----|----------|-----------|--------|-------------|---------|
-| DC Motors w/ Encoders | 2 | HIGH | $30 | Amazon | DG01D-E | Drive wheels |
-| Robot Wheels (65mm) | 2 | HIGH | $10 | Amazon | Match motor shaft | Traction |
-| Ball Caster Wheel | 1 | HIGH | $5 | Amazon | 15mm ball | Rear support |
-| L298N Motor Driver | 1 | HIGH | $8* | Amazon | L298N module | H-bridge (check ELEGOO kit first) |
-| BNO055 IMU | 1 | HIGH | $25 | Adafruit | Product ID: 2472 | 9-DOF orientation |
-| M3 Standoff Kit | 1 | MEDIUM | $12 | Amazon | Assorted 40-80mm | Deck mounting |
-| Buck Converter (5V) | 1 | MEDIUM | $8 | Amazon | LM2596 module | RPi power from battery |
-| USB-C Cable (short) | 1 | MEDIUM | $5 | Amazon | 15cm, right-angle | RPi power |
-| Dupont Wire Kit | 1 | MEDIUM | $10 | Amazon | Male-Male, Female-Female | Connections |
+| TBD DC Motors w/ Encoders | 2 | HIGH | $30 | Amazon | DG01D-E | Drive wheels |
+| TBD Robot Wheels (65mm) | 2 | HIGH | $10 | Amazon | Match motor shaft | Traction |
+| TBD Ball Caster Wheel | 1 | HIGH | $5 | Amazon | 15mm ball | Rear support |
+| TBD Motor Driver | 1 | HIGH | $8* | Amazon | L298N module | H-bridge (check ELEGOO kit first) |
+| TBD IMU | 1 | HIGH | $25 | Adafruit | Product ID: 2472 | 9-DOF orientation |
+| TBD M3 Standoff Kit | 1 | MEDIUM | $12 | Amazon | Assorted 40-80mm | Deck mounting |
+| TBD Buck Converter (5V) | 1 | MEDIUM | $8 | Amazon | LM2596 module | RPi power from battery |
+| TBD USB-C Cable (short) | 1 | MEDIUM | $5 | Amazon | 15cm, right-angle | RPi power |
+| TBD Dupont Wire Kit | 1 | MEDIUM | $10 | Amazon | Male-Male, Female-Female | Connections |
 
 **Subtotal (Phase 1):** ~$100
 
