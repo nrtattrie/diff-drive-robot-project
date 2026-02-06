@@ -56,7 +56,7 @@ A differential drive mobile robot built with ROS 2 Humble, featuring autonomous 
 - [Assembly Guide](docs/assembly.md) *(coming soon)*
 - [Software Setup](docs/software-setup.md) *(coming soon)*
 - [Learning Log](docs/learning-log.md)
-- [Troubleshooting](docs/troubleshooting.md) *(coming soon)*
+- [Troubleshooting](docs/troubleshooting.md)
 
 ## Repository Structure
 ```
