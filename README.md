@@ -1,6 +1,6 @@
 # Autonomous Mobile Robot
 
-A differential drive mobile robot built with ROS 2 Humble, featuring autonomous navigation, SLAM mapping, and obstacle avoidance.
+A differential drive mobile robot built with ROS 2 Jazzy, featuring autonomous navigation, SLAM mapping, and obstacle avoidance.
 
 ![Robot Image](media/images/hero.jpg)
 *Coming soon: Hero image of completed robot*
@@ -32,8 +32,8 @@ A differential drive mobile robot built with ROS 2 Humble, featuring autonomous 
 
 ## Software Stack
 
-- **OS:** Ubuntu 22.04 Server
-- **Framework:** ROS 2 Humble
+- **OS:** Ubuntu 24.04 Server
+- **Framework:** ROS 2 Jazzy
 - **Navigation:** Nav2
 - **Mapping:** slam_toolbox
 - **Control:** ros2_control
@@ -76,9 +76,9 @@ autonomous-mobile-robot/
 ## Getting Started
 
 ### Prerequisites
-- Ubuntu 22.04
-- ROS 2 Humble
-- Python 3.10+
+- Ubuntu 24.04
+- ROS 2 Jazzy
+- Python 3.12+
 - Arduino IDE (for motor controller)
 
 ### Installation
@@ -102,7 +102,7 @@ source install/setup.bash
 
 ## Resources
 
-- [ROS 2 Humble Documentation](https://docs.ros.org/en/humble/)
+- [ROS 2 Jazzy Documentation](https://docs.ros.org/en/jazzy/)
 - [Nav2 Documentation](https://navigation.ros.org/)
 - [Articulated Robotics Tutorials](https://articulatedrobotics.xyz/)
 

@@ -7,7 +7,7 @@
 
 ## Documentation
 
-- [ROS 2 Humble Docs](https://docs.ros.org/en/humble/)
+- [ROS 2 Jazzy Docs](https://docs.ros.org/en/jazzy/)
 - [Nav2 Documentation](https://navigation.ros.org/)
 - [slam_toolbox](https://github.com/SteveMacenski/slam_toolbox)
 
