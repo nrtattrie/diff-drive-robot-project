@@ -13,22 +13,7 @@ A differential drive mobile robot built with ROS 2 Jazzy, featuring autonomous n
 
 ## Hardware
 
-### Components
-- **Brain:** Raspberry Pi 5 (8GB)
-- **Motor Controller:** Arduino Mega 2560
-- **Sensors:** 
-  - RPLidar A1 (360° LIDAR) - *Planned*
-  - BNO055 9-DOF IMU - *Planned*
-  - HC-SR04 Ultrasonic sensors
-- **Actuation:** 2× DC motors with encoders
-- **Power:** 3S LiPo battery - *Planned*
-- **Chassis:** Custom 3D-printed (Bambu X1-C)
-
-### Specifications
-- **Type:** Differential drive
-- **Wheelbase:** ~160mm (TBD)
-- **Wheel Diameter:** 65mm
-- **Max Speed:** ~0.5 m/s (estimated)
+Differential drive robot powered by a Raspberry Pi 5 and Arduino Mega 2560, with LIDAR, IMU, and camera sensors. See the [Bill of Materials](docs/BOM.md) for the full parts list and sourcing details.
 
 ## Software Stack
 
