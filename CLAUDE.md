@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Differential drive mobile robot (Phase 1) converting to self-balancing robot (Phase 2). Same hardware platform for both phases. Currently in hardware selection/documentation phase — no application code exists yet.
 
-**Read `/docs/robotics_project_summary_v6.md` first** — single source of truth for all project decisions.
+**Read `/docs/robotics_project_summary_v7.md` first** — single source of truth for all project decisions.
 
 ## Architecture
 
