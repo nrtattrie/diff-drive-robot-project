@@ -235,6 +235,35 @@ Choose based on target companies:
 
 ---
 
+## Post-Tutorial Roadmap (Phase 1)
+
+### Stage 1: Software-Only (no hardware needed)
+1. **URDF** — model robot geometry (chassis, wheels, caster, sensor frames), visualize in RViz
+2. **tf2** — understand coordinate frames (base_link → odom → map)
+3. **Gazebo simulation** — spawn URDF, drive with `teleop_twist_keyboard` (try on Pi 5; skip if too painful)
+4. **ros2_control + diff_drive_controller** — configure standard diff-drive plugin in simulation (skip with step 3 if needed)
+
+### Stage 2: Chassis + Arduino (can overlap with Stage 1)
+5. **CAD & print chassis** — mount points for motors, caster, RPi, Arduino, buck converter
+6. **Arduino firmware** — custom serial protocol: receive motor commands, send encoder counts
+7. **Wiring** — motors → driver → Arduino → RPi, buck converter → RPi GPIO 5V
+
+### Stage 3: Real Hardware Driving (tethered power, no battery)
+8. **Serial bridge ROS 2 node** — Python node using `pyserial` to translate between ROS 2 topics and Arduino serial
+9. **Teleop on real robot** — keyboard commands → `/cmd_vel` → motors spin → robot moves
+10. **Odometry calibration** — tune encoder-based odometry, compare commanded vs actual motion
+
+### Stage 4: Autonomous Navigation (requires LiDAR + battery purchase)
+11. **Order + mount RPLidar A1 (~$100) and 3S LiPo battery (~$50)**
+12. **RPLidar ROS 2 driver** — publish laser scans
+13. **slam_toolbox** — drive around, build a map
+14. **Nav2** — autonomous path planning and navigation in mapped environment
+15. **IMU fusion** — combine BNO055 + wheel odometry via `robot_localization` (EKF)
+
+**Note:** HC-SR04 ultrasonic from Elegoo kit useful as supplementary close-range obstacle/cliff sensor but cannot replace LiDAR for SLAM/Nav2.
+
+---
+
 ## Development Environment
 
 **Primary Setup (OPERATIONAL):**
@@ -353,6 +382,10 @@ The goal is three complementary projects that tell a progression story:
     - Better performance (3-5x faster read/write)
     - Better reliability for development workloads
     - 939GB available storage
+16. **Arduino Comms:** Custom serial protocol (not micro-ROS)
+    - Simpler to debug and learn while still new to ROS 2
+    - Python bridge node using `pyserial` on RPi side
+    - Can migrate to micro-ROS later as a portfolio-worthy refactor
 
 **Terminology Note:** "Differential drive" = two independently driven wheels steering by speed difference (like Turtlebot). "Direct drive" in industry typically refers to gearless actuators for backdrivability (used in legged robots). Use "differential drive mobile robot" in portfolio and interviews.
 
