@@ -6,12 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Differential drive mobile robot (Phase 1) converting to self-balancing robot (Phase 2). Same hardware platform for both phases. Currently in hardware selection/documentation phase — no application code exists yet.
 
-**Read `/docs/robotics_project_summary_v7.md` first** — single source of truth for all project decisions.
+**Read `/docs/robotics_project_summary_v8.md` first** — single source of truth for all project decisions.
 
 ## Architecture
 
 - **Compute:** Raspberry Pi 5 (8GB), Ubuntu 24.04 Desktop, ROS 2 Jazzy LTS
-- **Motor control:** Arduino Mega 2560 (low-level I/O, encoders)
+- **Motor control:** Arduino Due (3.3V ARM, hardware quadrature encoders); Mega 2560 as backup
 - **Sensors:** RPLidar A1, BNO055 IMU, HC-SR04 ultrasonic, RPi Camera Module 3
 - **Motors:** 2x Pololu 37D 50:1 with encoders, Pololu G2 18v17 driver
 - **Power:** 3S LiPo → DROK buck converter → 5.1V for RPi via GPIO
