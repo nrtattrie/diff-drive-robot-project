@@ -2,6 +2,8 @@
 build/
 install/
 log/
+software/ros2_ws/src/examples/
+software/ros2_ws/src/ros_tutorials/
 *.pyc
 __pycache__/
 *.egg-info/
