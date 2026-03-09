@@ -6,7 +6,7 @@
 
 Differential drive mobile robot (Phase 1) converting to self-balancing robot (Phase 2). Same hardware platform for both phases.
 
-**Current status:** Phase 1 — Foundation. Dev environment operational. ROS 2 tutorials in progress.
+**Current status:** Phase 1 — Foundation. Stage 1 (software-only) complete. Starting Stage 2 (chassis + Arduino).
 
 ---
 
@@ -30,12 +30,12 @@ Differential drive mobile robot (Phase 1) converting to self-balancing robot (Ph
 - [ ] LiDAR purchase — RPLidar A1M8 (~$100) — deferred to Stage 4
 - [ ] Battery purchase — 3S LiPo 11.1V 2200–3000mAh + charger (~$50) + XT60 connectors (~$3) — deferred to Stage 4
 
-### Stage 1: Software-Only (no hardware needed)
+### Stage 1: Software-Only (no hardware needed) ✅ COMPLETE
 
-- [ ] URDF — model robot geometry (chassis, wheels, caster, sensor frames), visualize in RViz
-- [ ] tf2 — understand coordinate frames (`base_link → odom → map`)
-- [ ] Gazebo simulation — spawn URDF, drive with `teleop_twist_keyboard`
-- [ ] ros2_control + diff_drive_controller — configure standard diff-drive plugin in simulation
+- [x] URDF — model robot geometry (chassis, wheels, caster, sensor frames), visualize via Foxglove
+- [x] tf2 — understand coordinate frames (`base_link → odom → map`)
+- [x] Gazebo Harmonic simulation — spawn URDF, drive with `teleop_twist_keyboard`
+- [x] ros2_control + diff_drive_controller — configured in simulation; twist_relay.py bridges Twist→TwistStamped
 
 ### Stage 2: Chassis + Arduino (can overlap with Stage 1)
 
@@ -64,27 +64,25 @@ Differential drive mobile robot (Phase 1) converting to self-balancing robot (Ph
 
 **Completed:**
 
-- [X] Install VS Code with Remote SSH extension on Mac
-- [X] Set up GitHub repo structure
-- [X] Flash Ubuntu 24.04 LTS Desktop (64-bit) onto NVMe SSD
-- [X] Configure Pi 5 to boot from NVMe
-- [X] Install ROS 2 Jazzy
-- [X] Configure VS Code Remote SSH workflow + SSH alias ("pi")
-- [X] Clone project repo onto Pi
-- [X] Initialize ros2_ws with `colcon build`
-- [X] Run ROS 2 talker/listener demo successfully
-
-**In Progress:**
-
-- [X] Complete ROS 2 Jazzy CLI tutorials
-- [X] Read ROS 2 Jazzy documentation overview (concepts, architecture)
-- [X] Complete first 4 ROS 2 Jazzy tutorials on Pi
-
-**Upcoming:**
-
-- [ ] Create first custom ROS 2 package
-- [ ] Begin URDF tutorial
-- [X] Set up VS Code SSH key authentication (passwordless)
+- [x] Install VS Code with Remote SSH extension on Mac
+- [x] Set up GitHub repo structure
+- [x] Flash Ubuntu 24.04 LTS Desktop (64-bit) onto NVMe SSD
+- [x] Configure Pi 5 to boot from NVMe
+- [x] Install ROS 2 Jazzy
+- [x] Configure VS Code Remote SSH workflow + SSH alias ("pi")
+- [x] Clone project repo onto Pi
+- [x] Initialize ros2_ws with `colcon build`
+- [x] Run ROS 2 talker/listener demo successfully
+- [x] Complete ROS 2 Jazzy CLI tutorials
+- [x] Read ROS 2 Jazzy documentation overview (concepts, architecture)
+- [x] Complete first 4 ROS 2 Jazzy tutorials on Pi
+- [x] Set up VS Code SSH key authentication (passwordless)
+- [x] Create first custom ROS 2 package (`my_package` tutorial, then `diffbot_description`)
+- [x] Set up Foxglove Studio remote visualization (foxglove_bridge on Pi, Foxglove app on Mac)
+- [x] Complete URDF (chassis, wheels, caster, sensor frames)
+- [x] Gazebo Harmonic simulation with ros2_control + diff_drive_controller
+- [x] twist_relay.py — Twist→TwistStamped bridge for teleop compatibility
+- [x] start_sim.sh — sim quickstart script
 
 ---
 
