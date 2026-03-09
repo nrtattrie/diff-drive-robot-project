@@ -1,6 +1,6 @@
 # Nathan Tattrie - Robotics Career Pivot Project Summary
 
-> **DIRECTIVE FOR AI ASSISTANTS:** This document is the single source of truth for all project decisions. Before answering ANY question, internalize the full document — hardware specs (8GB Pi 5 requires Desktop GUI for RViz/Gazebo learning), software stack (Ubuntu 24.04 Desktop + ROS 2 Jazzy — non-negotiable), phase goals, and decision history. Every recommendation must be consistent with what is documented here. If you are uncertain about a detail, re-read the relevant section before responding. Do not give generic advice. Do not skim. Trace how decisions connect across sections — hardware choices affect software choices affect phase goals. If something in this document conflicts with a user request, flag it rather than silently overriding.
+> **DIRECTIVE FOR AI ASSISTANTS:** This is a historical record as of February 16, 2026. Do not treat it as current. For current technical decisions see `architecture.md`; for current phase plan see `phases.md`; for session history see `docs/sessions/`.
 
 **Last Updated:** February 26, 2026
 **Status:** Phase 1 - Foundation (URDF started, Foxglove visualization operational)
