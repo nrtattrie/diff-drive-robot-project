@@ -6,7 +6,7 @@
 
 Differential drive mobile robot (Phase 1) converting to self-balancing robot (Phase 2). Same hardware platform for both phases.
 
-**Current status:** Phase 1 — Foundation. Stage 1 (software-only) complete. Starting Stage 2 (chassis + Arduino).
+**Current status:** Phase 1 — Foundation. Stage 1 in progress (rebuilding from scratch; prior files were Claude-generated). Stage 2 not started.
 
 ---
 
@@ -30,12 +30,12 @@ Differential drive mobile robot (Phase 1) converting to self-balancing robot (Ph
 - [ ] LiDAR purchase — RPLidar A1M8 (~$100) — deferred to Stage 4
 - [ ] Battery purchase — 3S LiPo 11.1V 2200–3000mAh + charger (~$50) + XT60 connectors (~$3) — deferred to Stage 4
 
-### Stage 1: Software-Only (no hardware needed) ✅ COMPLETE
+### Stage 1: Software-Only (no hardware needed)
 
-- [x] URDF — model robot geometry (chassis, wheels, caster, sensor frames), visualize via Foxglove
-- [x] tf2 — understand coordinate frames (`base_link → odom → map`)
-- [x] Gazebo Harmonic simulation — spawn URDF, drive with `teleop_twist_keyboard`
-- [x] ros2_control + diff_drive_controller — configured in simulation; twist_relay.py bridges Twist→TwistStamped
+- [ ] URDF — model robot geometry (chassis, wheels, caster, sensor frames), visualize via Foxglove
+- [ ] tf2 — understand coordinate frames (`base_link → odom → map`)
+- [ ] Gazebo Harmonic simulation — spawn URDF, drive with `teleop_twist_keyboard`
+- [ ] ros2_control + diff_drive_controller — configured in simulation; twist_relay.py bridges Twist→TwistStamped
 
 ### Stage 2: Chassis + Arduino (can overlap with Stage 1)
 
