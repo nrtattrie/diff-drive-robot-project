@@ -1,76 +1,94 @@
-# Gazebo Simulation — Quick Start
+# Gazebo Simulation Quickstart
 
----
+This starts the current lightweight Gazebo Harmonic simulation for the rough
+diff-drive base.
 
-## Option A — One command (recommended)
+This workflow uses multiple terminals. The Gazebo launch command keeps running;
+that is normal.
 
-`scripts/start_sim.sh` opens all three terminals at once using tmux.
+## Terminal 1: Launch Gazebo
 
 ```bash
-~/diff-drive-robot-project/scripts/start_sim.sh
+cd ~/diff-drive-robot-project/software/ros2_ws
+colcon build --packages-select diffbot_description
+source install/setup.bash
+ros2 launch diffbot_description gazebo.launch.py
 ```
 
-You land on the **teleop** window with keyboard focus. Switch between windows:
+By default this runs Gazebo server-only with no popup:
 
-| Action | Keys |
-|--------|------|
-| Switch to sim window | `Ctrl+B` then `1` |
-| Switch to relay | `Ctrl+B` then `2` |
-| Switch to foxglove | `Ctrl+B` then `3` |
-| Switch to teleop | `Ctrl+B` then `4` |
-| Detach (leave running) | `Ctrl+B` then `d` |
-| Re-attach later | run `start_sim.sh` again |
-| Kill everything | `Ctrl+B` then `:kill-session` |
+```text
+-s -r empty.sdf
+```
 
-Requires tmux: `sudo apt install tmux`
+To open the Gazebo GUI instead, stop Terminal 1 with `Ctrl+C`, then relaunch:
 
----
-
-## Option B — Manual (three separate SSH terminals)
-
-Each terminal must source the workspace first:
 ```bash
-source /opt/ros/jazzy/setup.bash
-source ~/diff-drive-robot-project/software/ros2_ws/install/setup.bash
+ros2 launch diffbot_description gazebo.launch.py gz_args:="-r empty.sdf"
 ```
 
-| # | Purpose | Command |
-|---|---------|---------|
-| 1 | Simulation | `ros2 launch diffbot_description gazebo.launch.py` |
-| 2 | Twist relay | `python3 ~/diff-drive-robot-project/scripts/twist_relay.py` |
-| 3 | Foxglove bridge | `ros2 run foxglove_bridge foxglove_bridge` |
-| 4 | Teleop (drive) | `ros2 run teleop_twist_keyboard teleop_twist_keyboard` |
+If you are SSH'd into the Pi from a Mac, the Gazebo GUI may open on the Pi's
+desktop, not on the Mac. Use the server-only launch for headless testing.
 
-Note: The relay (window 2) is needed because `diff_drive_controller` in ROS 2 Jazzy
-requires `TwistStamped`, but `teleop_twist_keyboard` publishes plain `Twist`.
+The launch also starts `foxglove_bridge`, so Foxglove Studio on the Mac can
+connect to:
 
----
+```text
+ws://100.105.3.35:8765
+```
 
-## Start order
+In Foxglove's 3D panel, use:
 
-Terminal 1 first. Wait until both controllers show `active`:
+```text
+Fixed frame: odom
+```
+
+The robot should move in Foxglove after teleop commands are sent.
+
+## Terminal 2: Drive With Teleop
+
 ```bash
-ros2 control list_controllers
-# joint_state_broadcaster[...] active
-# diffbot_base_controller[...]  active
+cd ~/diff-drive-robot-project/software/ros2_ws
+source install/setup.bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r /cmd_vel:=/model/diffbot/cmd_vel
 ```
-Then start Terminals 2 and 3 in any order.
 
-Terminal 3 (teleop) must stay **focused**. Use `i/j/l/,` to drive; `k` to stop.
+Use the normal `teleop_twist_keyboard` keys:
 
----
+```text
+i = forward
+, = backward
+j = turn left
+l = turn right
+k = stop
+```
 
-## Foxglove WebSocket URL
+The remap is needed because Gazebo's diff-drive plugin listens on:
 
-The Pi's IP address can change. Get the current IP:
+```text
+/model/diffbot/cmd_vel
+```
+
+## Optional: Confirm Motion From Odometry
+
+In a third terminal:
+
 ```bash
-hostname -I   # use the first address shown
+cd ~/diff-drive-robot-project/software/ros2_ws
+source install/setup.bash
+ros2 topic echo /model/diffbot/odometry --field pose.pose.position
 ```
 
-Connect Foxglove Studio to: `ws://<ip>:8765`
+When the robot moves, the reported position should change.
 
----
+## What This Stage Uses
+
+- `gazebo.launch.py` starts Gazebo, spawns the URDF, and bridges command/odometry topics.
+- The URDF uses Gazebo's built-in `DiffDrive` system plugin.
+- `odom_to_tf.py` converts Gazebo odometry into the `odom -> base_link` transform for Foxglove.
+- Gazebo joint states are bridged to `/joint_states` so wheel transforms can update.
+- This does not use `ros2_control` yet. That is the next Stage 1 box.
 
 ## Shutdown
 
-Ctrl+C in each terminal (or `:kill-session` in tmux). Reverse order: teleop → foxglove → sim.
+Press `Ctrl+C` in the teleop terminal, then `Ctrl+C` in the Gazebo launch terminal.

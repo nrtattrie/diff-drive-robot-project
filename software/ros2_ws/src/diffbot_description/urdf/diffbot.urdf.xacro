@@ -1,290 +1,203 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="diffbot">
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       ROBOT PARAMETERS
-       All dimensions in meters, masses in kg.
-       Based on actual hardware (see robotics_project_summary_v9.md).
-  ═══════════════════════════════════════════════════════════════ -->
+  <xacro:arg name="use_ros2_control" default="false"/>
+  <xacro:arg name="controllers_file" default=""/>
 
-  <!-- Chassis (estimated dimensions — update after CAD) -->
+  <!-- SIMULATION PARAMETERS -->
   <xacro:property name="chassis_length" value="0.25"/>
-  <xacro:property name="chassis_width"  value="0.18"/>
+  <xacro:property name="chassis_width" value="0.18"/>
   <xacro:property name="chassis_height" value="0.06"/>
-  <xacro:property name="chassis_mass"   value="0.80"/>
+  <xacro:property name="chassis_mass" value="1.0"/>
 
-  <!-- Drive Wheels: Pololu 80×10mm pair (#1430)
-       wheel_radius = 80mm dia / 2 = 0.040m
-       wheel_width  = 10mm = 0.010m
-       track_width  = wheel center-to-center lateral distance        -->
-  <xacro:property name="wheel_radius" value="0.040"/>
-  <xacro:property name="wheel_width"  value="0.010"/>
-  <xacro:property name="wheel_mass"   value="0.050"/>
-  <xacro:property name="track_width"  value="0.230"/>
+  <xacro:property name="wheel_radius" value="0.04"/>
+  <xacro:property name="wheel_width" value="0.01"/>
+  <xacro:property name="wheel_mass" value="0.05"/>
 
-  <!-- Ball Caster: Pololu 3/4" plastic ball (#954)
-       3/4 inch = 19.05mm diameter → radius = 0.00952m              -->
-  <xacro:property name="caster_radius" value="0.00952"/>
-  <xacro:property name="caster_mass"   value="0.010"/>
-  <xacro:property name="caster_x_pos"  value="-0.100"/>  <!-- rear -->
+  <!-- base_link is at the wheel axle centerline. -->
+  <xacro:property name="chassis_z" value="${chassis_height / 2.0}"/>
+  <xacro:property name="wheel_x" value="${chassis_length / 4.0}"/>
+  <xacro:property name="wheel_y" value="0.095"/>
+  <xacro:property name="wheel_z" value="0.0"/>
 
+  <xacro:property name="caster_radius" value="${wheel_radius / 2.0}"/>
+  <xacro:property name="caster_x" value="${-chassis_length / 4.0}"/>
+  <xacro:property name="caster_z" value="${caster_radius - wheel_radius}"/>
+  <xacro:property name="caster_mass" value="0.02"/>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       INERTIA MACROS
-  ═══════════════════════════════════════════════════════════════ -->
-
-  <!-- Solid box -->
-  <xacro:macro name="box_inertia" params="m x y z">
+  <xacro:macro name="box_inertia" params="mass x y z">
     <inertial>
-      <mass value="${m}"/>
+      <mass value="${mass}"/>
       <inertia
-        ixx="${(1/12) * m * (y*y + z*z)}" ixy="0.0" ixz="0.0"
-        iyy="${(1/12) * m * (x*x + z*z)}" iyz="0.0"
-        izz="${(1/12) * m * (x*x + y*y)}"/>
+        ixx="${mass * (y*y + z*z) / 12.0}" ixy="0" ixz="0"
+        iyy="${mass * (x*x + z*z) / 12.0}" iyz="0"
+        izz="${mass * (x*x + y*y) / 12.0}"/>
     </inertial>
   </xacro:macro>
 
-  <!-- Solid cylinder, spin axis along Y (wheel orientation in diff-drive) -->
-  <xacro:macro name="cylinder_inertia" params="m r h">
+  <xacro:macro name="wheel_inertia" params="mass radius width">
     <inertial>
-      <mass value="${m}"/>
+      <mass value="${mass}"/>
       <inertia
-        ixx="${(1/12) * m * (3*r*r + h*h)}" ixy="0.0" ixz="0.0"
-        iyy="${(1/2)  * m * r*r}"            iyz="0.0"
-        izz="${(1/12) * m * (3*r*r + h*h)}"/>
+        ixx="${mass * (3*radius*radius + width*width) / 12.0}" ixy="0" ixz="0"
+        iyy="${mass * radius*radius / 2.0}" iyz="0"
+        izz="${mass * (3*radius*radius + width*width) / 12.0}"/>
     </inertial>
   </xacro:macro>
 
-  <!-- Solid sphere -->
-  <xacro:macro name="sphere_inertia" params="m r">
+  <xacro:macro name="sphere_inertia" params="mass radius">
     <inertial>
-      <mass value="${m}"/>
+      <mass value="${mass}"/>
       <inertia
-        ixx="${(2/5) * m * r*r}" ixy="0.0" ixz="0.0"
-        iyy="${(2/5) * m * r*r}" iyz="0.0"
-        izz="${(2/5) * m * r*r}"/>
+        ixx="${2.0 * mass * radius*radius / 5.0}" ixy="0" ixz="0"
+        iyy="${2.0 * mass * radius*radius / 5.0}" iyz="0"
+        izz="${2.0 * mass * radius*radius / 5.0}"/>
     </inertial>
   </xacro:macro>
 
+  <!-- BASE LINK -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 ${chassis_z}" rpy="0 0 0"/>
+      <geometry>
+          <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${chassis_z}" rpy="0 0 0"/>
+      <geometry>
+          <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertia mass="${chassis_mass}" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}"/>
+  </link>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       WHEEL MACRO
-       prefix    : "left" or "right"
-       y_reflect : +1 for left, -1 for right
-  ═══════════════════════════════════════════════════════════════ -->
-
-  <xacro:macro name="drive_wheel" params="prefix y_reflect">
-
-    <link name="${prefix}_wheel_link">
+  <!-- WHEEL LINK -->
+  <xacro:macro name="wheel" params="name">
+    <link name="${name}">
       <visual>
-        <!-- rotate cylinder so its axis aligns with Y (lateral) -->
-        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <origin xyz="0 0 0" rpy="1.57075 0 0"/>
         <geometry>
-          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+            <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
         </geometry>
-        <material name="dark_grey">
-          <color rgba="0.2 0.2 0.2 1.0"/>
+        <material name="black">
+          <color rgba="0 0 0 1"/>
         </material>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <origin xyz="0 0 0" rpy="1.57075 0 0"/>
         <geometry>
-          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+            <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
         </geometry>
       </collision>
-      <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+      <xacro:wheel_inertia mass="${wheel_mass}" radius="${wheel_radius}" width="${wheel_width}"/>
     </link>
-
-    <joint name="${prefix}_wheel_joint" type="continuous">
-      <parent link="base_link"/>
-      <child  link="${prefix}_wheel_link"/>
-      <!-- wheels are at the mid-lateral edge; no x offset (centered) -->
-      <origin xyz="0 ${y_reflect * track_width / 2} 0" rpy="0 0 0"/>
-      <axis xyz="0 1 0"/>
-    </joint>
-
   </xacro:macro>
 
+  <xacro:wheel name="left_wheel"/>
+  <xacro:wheel name="right_wheel"/>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       CHASSIS  (base_link)
+  <!-- CASTER LINK -->
+  <xacro:macro name="caster" params="name">
+    <link name="${name}">
+      <visual>
+        <origin xyz="0 0 0.0" rpy="0 0 0"/>
+        <geometry>
+              <sphere radius="${caster_radius}"/>
+        </geometry>
+        <material name="black">
+          <color rgba="0 0 0 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <sphere radius="${caster_radius}"/>
+        </geometry>
+      </collision>
+      <xacro:sphere_inertia mass="${caster_mass}" radius="${caster_radius}"/>
+    </link>
+  </xacro:macro>
 
-       base_link origin = wheel axle height (0.040m above ground),
-       laterally centered on the robot.
-       The chassis box sits on top: visual offset z = chassis_height/2.
-  ═══════════════════════════════════════════════════════════════ -->
-
-  <link name="base_link">
-    <visual>
-      <origin xyz="0 0 ${chassis_height / 2}" rpy="0 0 0"/>
-      <geometry>
-        <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
-      </geometry>
-      <material name="blue">
-        <color rgba="0.2 0.4 0.8 1.0"/>
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 ${chassis_height / 2}" rpy="0 0 0"/>
-      <geometry>
-        <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
-      </geometry>
-    </collision>
-    <xacro:box_inertia m="${chassis_mass}"
-                       x="${chassis_length}"
-                       y="${chassis_width}"
-                       z="${chassis_height}"/>
-  </link>
+  <xacro:caster name="caster"/>
 
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       DRIVE WHEELS
-  ═══════════════════════════════════════════════════════════════ -->
-
-  <xacro:drive_wheel prefix="left"  y_reflect="1"/>
-  <xacro:drive_wheel prefix="right" y_reflect="-1"/>
-
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       BALL CASTER  (Pololu 3/4" plastic ball)
-
-       The ball sits on the ground → its center is at caster_radius
-       above the ground.  base_link is at wheel_radius above ground.
-       Therefore, in base_link frame:
-           z = caster_radius - wheel_radius  (negative → below axle)
-  ═══════════════════════════════════════════════════════════════ -->
-
-  <link name="caster_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <sphere radius="${caster_radius}"/>
-      </geometry>
-      <material name="light_grey">
-        <color rgba="0.7 0.7 0.7 1.0"/>
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <sphere radius="${caster_radius}"/>
-      </geometry>
-    </collision>
-    <xacro:sphere_inertia m="${caster_mass}" r="${caster_radius}"/>
-  </link>
-
-  <joint name="caster_joint" type="fixed">
+  <!-- JOINTS -->
+  <joint name="base_link_to_left_wheel" type="continuous">
     <parent link="base_link"/>
-    <child  link="caster_link"/>
-    <origin xyz="${caster_x_pos} 0 ${caster_radius - wheel_radius}" rpy="0 0 0"/>
+    <child link="left_wheel"/>
+    <origin xyz="${wheel_x} ${wheel_y} ${wheel_z}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
   </joint>
 
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       SENSOR FRAMES  (placeholder geometry — positions approximate)
-  ═══════════════════════════════════════════════════════════════ -->
-
-  <!-- RPLidar A1: ~76mm dia × 41mm tall cylinder
-       Mounted front-center on top of chassis.                       -->
-  <link name="lidar_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <cylinder radius="0.038" length="0.041"/>
-      </geometry>
-      <material name="lidar_black">
-        <color rgba="0.1 0.1 0.1 1.0"/>
-      </material>
-    </visual>
-  </link>
-
-  <joint name="lidar_joint" type="fixed">
+  <joint name="base_link_to_right_wheel" type="continuous">
     <parent link="base_link"/>
-    <child  link="lidar_link"/>
-    <!-- z = chassis top + half of lidar height -->
-    <origin xyz="0.05 0 ${chassis_height + 0.0205}" rpy="0 0 0"/>
+    <child link="right_wheel"/>
+    <origin xyz="${wheel_x} -${wheel_y} ${wheel_z}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
   </joint>
 
-  <!-- BNO055 IMU: ~25×20×4mm PCB
-       Mounted at chassis center (approximate CoM).                  -->
-  <link name="imu_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <box size="0.025 0.020 0.004"/>
-      </geometry>
-      <material name="imu_green">
-        <color rgba="0.2 0.8 0.2 1.0"/>
-      </material>
-    </visual>
-  </link>
-
-  <joint name="imu_joint" type="fixed">
+  <joint name="base_link_to_caster" type="fixed">
     <parent link="base_link"/>
-    <child  link="imu_link"/>
-    <!-- z = chassis top + half PCB thickness -->
-    <origin xyz="0 0 ${chassis_height + 0.002}" rpy="0 0 0"/>
+    <child link="caster"/>
+    <origin xyz="${caster_x} 0 ${caster_z}" rpy="0 0 0"/>
   </joint>
 
-  <!-- RPi Camera Module 3: ~25×24×8mm (with lens protrusion)
-       Mounted on front face of chassis, facing forward (+X).        -->
-  <link name="camera_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <box size="0.008 0.025 0.024"/>
-      </geometry>
-      <material name="camera_green">
-        <color rgba="0.1 0.5 0.1 1.0"/>
-      </material>
-    </visual>
-  </link>
+  <xacro:unless value="$(arg use_ros2_control)">
+    <gazebo>
+      <plugin filename="gz-sim-joint-state-publisher-system"
+              name="gz::sim::systems::JointStatePublisher">
+      </plugin>
 
-  <joint name="camera_joint" type="fixed">
-    <parent link="base_link"/>
-    <child  link="camera_link"/>
-    <!-- x = front face; z = 3/4 up the chassis height -->
-    <origin xyz="${chassis_length / 2} 0 ${chassis_height * 0.75}" rpy="0 0 0"/>
-  </joint>
+      <plugin filename="gz-sim-diff-drive-system"
+              name="gz::sim::systems::DiffDrive">
+        <left_joint>base_link_to_left_wheel</left_joint>
+        <right_joint>base_link_to_right_wheel</right_joint>
+        <wheel_separation>${2 * wheel_y}</wheel_separation>
+        <wheel_radius>${wheel_radius}</wheel_radius>
+        <odom_publish_frequency>30</odom_publish_frequency>
+        <max_linear_velocity>0.5</max_linear_velocity>
+        <min_linear_velocity>-0.5</min_linear_velocity>
+        <max_angular_velocity>1.0</max_angular_velocity>
+        <min_angular_velocity>-1.0</min_angular_velocity>
+      </plugin>
+    </gazebo>
+  </xacro:unless>
 
+  <xacro:if value="$(arg use_ros2_control)">
+    <ros2_control name="GazeboSimSystem" type="system">
+      <hardware>
+        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+      </hardware>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       ROS 2 CONTROL — hardware interface for Gazebo simulation
-  ═══════════════════════════════════════════════════════════════ -->
-  <ros2_control name="GazeboSimSystem" type="system">
-    <hardware>
-      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-    </hardware>
+      <joint name="base_link_to_left_wheel">
+        <command_interface name="velocity">
+          <param name="min">-10</param>
+          <param name="max">10</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
 
-    <joint name="left_wheel_joint">
-      <command_interface name="velocity">
-        <param name="min">-10</param>
-        <param name="max">10</param>
-      </command_interface>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
+      <joint name="base_link_to_right_wheel">
+        <command_interface name="velocity">
+          <param name="min">-10</param>
+          <param name="max">10</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
 
-    <joint name="right_wheel_joint">
-      <command_interface name="velocity">
-        <param name="min">-10</param>
-        <param name="max">10</param>
-      </command_interface>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-  </ros2_control>
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       GAZEBO — load gz_ros2_control plugin
-  ═══════════════════════════════════════════════════════════════ -->
-  <gazebo>
-    <plugin filename="gz_ros2_control-system"
-            name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>$(find diffbot_description)/config/diffbot_controllers.yaml</parameters>
-      <robot_param>robot_description</robot_param>
-      <robot_param_node>robot_state_publisher</robot_param_node>
-    </plugin>
-  </gazebo>
+    <gazebo>
+      <plugin filename="gz_ros2_control-system"
+              name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+        <parameters>$(arg controllers_file)</parameters>
+      </plugin>
+    </gazebo>
+  </xacro:if>
 
 </robot>

@@ -27,4 +27,10 @@ install(DIRECTORY launch urdf rviz config
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(PROGRAMS
+  scripts/odom_to_tf.py
+  scripts/twist_to_twist_stamped.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()

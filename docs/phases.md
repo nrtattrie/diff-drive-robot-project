@@ -6,7 +6,7 @@
 
 Differential drive mobile robot (Phase 1) converting to self-balancing robot (Phase 2). Same hardware platform for both phases.
 
-**Current status:** Phase 1 — Foundation. Stage 1 in progress (rebuilding from scratch; prior files were Claude-generated). Stage 2 not started.
+**Current status:** Phase 1 — Foundation. Stage 1 complete. Stage 2 not started.
 
 ---
 
@@ -32,10 +32,14 @@ Differential drive mobile robot (Phase 1) converting to self-balancing robot (Ph
 
 ### Stage 1: Software-Only (no hardware needed)
 
-- [ ] URDF — model robot geometry (chassis, wheels, caster, sensor frames), visualize via Foxglove
-- [ ] tf2 — understand coordinate frames (`base_link → odom → map`)
-- [ ] Gazebo Harmonic simulation — spawn URDF, drive with `teleop_twist_keyboard`
-- [ ] ros2_control + diff_drive_controller — configured in simulation; twist_relay.py bridges Twist→TwistStamped
+- [x] URDF — model robot geometry (chassis, wheels, caster), visualize via Foxglove
+- [x] tf2 — understand coordinate frames (`base_link → odom → map`)
+- [x] Gazebo Harmonic simulation — spawn URDF, drive with `teleop_twist_keyboard`
+  - `gazebo.launch.py` uses Gazebo's built-in `DiffDrive` plugin as the lightweight baseline.
+  - Command path: `teleop_twist_keyboard -> ros_gz_bridge -> Gazebo DiffDrive -> Gazebo odometry`.
+- [x] `ros2_control + diff_drive_controller` — configured and live-verified in simulation
+  - `gazebo_ros2_control.launch.py` starts `gz_ros2_control`, the controller spawners, and Foxglove support.
+  - `twist_to_twist_stamped.py` bridges teleop's `Twist` commands to the controller's `TwistStamped` input.
 
 ### Stage 2: Chassis + Arduino (can overlap with Stage 1)
 
@@ -79,10 +83,11 @@ Differential drive mobile robot (Phase 1) converting to self-balancing robot (Ph
 - [x] Set up VS Code SSH key authentication (passwordless)
 - [x] Create first custom ROS 2 package (`my_package` tutorial, then `diffbot_description`)
 - [x] Set up Foxglove Studio remote visualization (foxglove_bridge on Pi, Foxglove app on Mac)
-- [x] Complete URDF (chassis, wheels, caster, sensor frames)
-- [x] Gazebo Harmonic simulation with ros2_control + diff_drive_controller
-- [x] twist_relay.py — Twist→TwistStamped bridge for teleop compatibility
-- [x] start_sim.sh — sim quickstart script
+- [x] Complete URDF (chassis, wheels, caster)
+- [x] Gazebo Harmonic simulation with built-in `DiffDrive`
+- [x] Gazebo Harmonic simulation with `ros2_control + diff_drive_controller`
+- [x] `twist_to_twist_stamped.py` — teleop compatibility bridge
+- [x] `start_foxglove_display.sh` — static model display helper
 
 ---
 
