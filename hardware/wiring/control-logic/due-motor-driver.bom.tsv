@@ -1,0 +1,3 @@
+Id	Description	Qty	Unit	Designators
+1	Connector, Arduino Due, Motor-control pins, 12 pins	1		DUE1
+2	Connector, Pololu #2507 Dual VNH5019 motor driver, Logic header, 12 pins	1		DRV1

@@ -1,0 +1,169 @@
+metadata:
+  title: Encoder translator and Arduino Due wiring
+  description: "Focused P8, P9, S6, and S7 wiring for both #4753 encoders, the 74LVC245, and Arduino Due."
+  notes: |
+    This focused view is intentionally redundant with control-logic.yml and motor-wire-groups.yml.
+    Use the owned Mega Prototype Shield V3 as carrier, one #2204 socket, one #735 translator,
+    two marked 1x6 header segments for the factory encoder housings, and owned low-current jumper wire.
+    The complete 74LVC245 DIP pinout is shown, including grounded unused A inputs,
+    open unused B outputs, fixed DIR and /OE straps, and local decoupling.
+
+options:
+  color_mode: FULL
+
+connectors:
+  DUE1:
+    type: Arduino Due
+    subtype: Encoder interface pins
+    pins: [5V, 3V3, GND, D2, D13, D5, D4]
+    pinlabels:
+      - Encoder 5V output
+      - Translator 3.3V output
+      - Common logic ground
+      - Left encoder A / TIOA0
+      - Left encoder B / TIOB0
+      - Right encoder A / TIOA6
+      - Right encoder B / TIOB6
+
+  ENC_L:
+    type: "Left #4753 encoder"
+    subtype: Logical view of shared six-wire motor assembly
+    pins: [BLUE, GREEN, YELLOW, WHITE]
+    pinlabels: [Encoder +5V, Encoder GND, Encoder A, Encoder B]
+    pincolors: [BU, GN, YE, WH]
+    notes: Factory wire colors; cavity order remains unverified. Retain the 1x6 female housing and mate it to a marked male header segment on the carrier if practical.
+    ignore_in_bom: true
+
+  ENC_R:
+    type: "Right #4753 encoder"
+    subtype: Logical view of shared six-wire motor assembly
+    pins: [BLUE, GREEN, YELLOW, WHITE]
+    pinlabels: [Encoder +5V, Encoder GND, Encoder A, Encoder B]
+    pincolors: [BU, GN, YE, WH]
+    notes: Factory wire colors; cavity order remains unverified. Retain the 1x6 female housing and mate it to a marked male header segment on the carrier if practical.
+    ignore_in_bom: true
+
+  U1:
+    type: "Owned Adafruit #735 74LVC245 octal bus transceiver"
+    subtype: "3.3V translator in #2204 socket on Mega prototype carrier"
+    pins: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    pinlabels:
+      - DIR / tie to 3.3V
+      - A1 / left encoder A
+      - A2 / left encoder B
+      - A3 / right encoder A
+      - A4 / right encoder B
+      - A5 / tie to GND
+      - A6 / tie to GND
+      - A7 / tie to GND
+      - A8 / tie to GND
+      - GND
+      - B8 / leave unconnected
+      - B7 / leave unconnected
+      - B6 / leave unconnected
+      - B5 / leave unconnected
+      - B4 / right encoder B
+      - B3 / right encoder A
+      - B2 / left encoder B
+      - B1 / left encoder A
+      - /OE / tie to GND
+      - VCC / 3.3V
+    notes: "Install in one owned #2204 20-pin socket soldered to the owned Mega Prototype Shield V3 after checking its rail layout. Pins 11-14 remain open; no 5V encoder signal bypasses U1."
+    additional_components:
+      - type: "Owned Adafruit #2204 20-pin IC socket"
+        qty: 1
+      - type: Owned Arduino Mega Prototype Shield V3
+        subtype: Translator and encoder fanout carrier
+        qty: 1
+
+  C1:
+    type: Owned 0.1 uF ceramic capacitor
+    subtype: "104 decoupling capacitor"
+    pins: [1, 2]
+    pinlabels: [VCC side, GND side]
+    notes: Mount directly across U1 pins 20 and 10.
+
+cables:
+  W_ENCODER_POWER:
+    type: P8 factory conductors through retained 1x6 housings
+    wirecount: 4
+    colors: [BU, GN, BU, GN]
+    wirelabels: [LEFT_5V, LEFT_GND, RIGHT_5V, RIGHT_GND]
+    ignore_in_bom: true
+
+  W_ENCODER_A_SIDE:
+    type: S6 factory signals through retained 1x6 housings
+    wirecount: 4
+    colors: [YE, WH, YE, WH]
+    wirelabels: [LEFT_A_5V, LEFT_B_5V, RIGHT_A_5V, RIGHT_B_5V]
+    notes: "Use marked 1x6 male segments cut from the #2507-supplied 0.1-inch breakaway header only after verifying the motor-housing cavity order."
+    ignore_in_bom: true
+
+  W_U1_DUE:
+    type: S7 owned male-ended Dupont leads from carrier to Due
+    wirecount: 4
+    colors: ["", "", "", ""]
+    wirelabels: [LEFT_A_3V3, LEFT_B_3V3, RIGHT_A_3V3, RIGHT_B_3V3]
+    ignore_in_bom: true
+
+  W_U1_3V3:
+    type: P9 owned Due jumper plus short soldered carrier strap
+    wirecount: 2
+    colors: ["", ""]
+    wirelabels: [U1_VCC, U1_DIR]
+    ignore_in_bom: true
+
+  W_U1_GND:
+    type: Owned Due jumper plus short soldered carrier ground straps
+    wirecount: 6
+    colors: ["", "", "", "", "", ""]
+    wirelabels: [U1_GND, U1_OE, U1_A5, U1_A6, U1_A7, U1_A8]
+    ignore_in_bom: true
+
+  W_C1:
+    type: U1 short soldered carrier connection
+    wirecount: 2
+    colors: ["", ""]
+    wirelabels: [VCC, GND]
+    ignore_in_bom: true
+
+connections:
+  -
+    - DUE1: [5V, GND]
+    - W_ENCODER_POWER: [1, 2]
+    - ENC_L: [BLUE, GREEN]
+
+  -
+    - DUE1: [5V, GND]
+    - W_ENCODER_POWER: [3, 4]
+    - ENC_R: [BLUE, GREEN]
+
+  -
+    - ENC_L: [YELLOW, WHITE]
+    - W_ENCODER_A_SIDE: [1, 2]
+    - U1: [2, 3]
+
+  -
+    - ENC_R: [YELLOW, WHITE]
+    - W_ENCODER_A_SIDE: [3, 4]
+    - U1: [4, 5]
+
+  -
+    - U1: [18, 17, 16, 15]
+    - W_U1_DUE: [1, 2, 3, 4]
+    - DUE1: [D2, D13, D5, D4]
+
+  -
+    - DUE1: [3V3, 3V3]
+    - W_U1_3V3: [1, 2]
+    - U1: [20, 1]
+
+  -
+    - DUE1: [GND, GND, GND, GND, GND, GND]
+    - W_U1_GND: [1, 2, 3, 4, 5, 6]
+    - U1: [10, 19, 6, 7, 8, 9]
+
+  -
+    - U1: [20, 10]
+    - W_C1: [1, 2]
+    - C1: [1, 2]

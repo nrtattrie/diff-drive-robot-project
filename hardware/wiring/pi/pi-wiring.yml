@@ -1,0 +1,340 @@
+metadata:
+  title: Raspberry Pi 5 power and peripheral wiring
+  description: Pi-centered wiring for power, installed storage/cooling, Arduino Due, switched USB hub, BNO055, camera, and future RPLidar.
+  notes: |
+    The DROK header feed is the mobile power method.
+    The official 27 W USB-C supply is the alternate bench power method.
+    Never connect the mobile header feed and USB-C power at the same time.
+    Keep the Due direct on one black USB 2.0 port; put only the low-current BNO055 branch on the owned #2998 hub.
+    Keep the future RPLidar direct on a blue USB 3.0 port. Exact top/bottom member of each same-color pair and CAM/DISP socket remain to be labeled.
+
+options:
+  color_mode: FULL
+
+connectors:
+  PS1:
+    type: DROK 5.10 V converter
+    pins: [OUT_POS, OUT_NEG]
+    pinlabels: [OUT+, OUT-]
+    pincolors: [RD, BK]
+    notes: Mobile power source; output voltage and loaded behavior require validation.
+
+  PSU1:
+    type: Official Raspberry Pi 27 W USB-C power supply
+    pins: [VBUS, GND]
+    pinlabels: [Managed 5.1 V, Ground]
+    pincolors: [RD, BK]
+    notes: Bench-only alternative to the DROK header feed.
+    ignore_in_bom: true
+
+  H1:
+    type: Owned 2x20 extra-tall female 0.1-inch stacking header
+    subtype: 23 mm GPIO extension; four used contacts shown
+    pins: [2, 4, 6, 14]
+    pinlabels: [5V pin 2, 5V pin 4, GND pin 6, GND pin 14]
+    pincolors: [RD, RD, BK, BK]
+    notes: One header exposes these contacts through the M.2 HAT+ stack. Confirm actual fit, pin numbering, and jumper gender before power.
+
+  PI1:
+    type: Raspberry Pi 5
+    subtype: Power and external interfaces
+    pins:
+      - HDR_2
+      - HDR_4
+      - HDR_6
+      - HDR_14
+      - USBC_VBUS
+      - USBC_GND
+      - USB2_DUE_VBUS
+      - USB2_DUE_D_MINUS
+      - USB2_DUE_D_PLUS
+      - USB2_DUE_GND
+      - USB2_HUB_VBUS
+      - USB2_HUB_D_MINUS
+      - USB2_HUB_D_PLUS
+      - USB2_HUB_GND
+      - USB3_LIDAR_VBUS
+      - USB3_LIDAR_D_MINUS
+      - USB3_LIDAR_D_PLUS
+      - USB3_LIDAR_GND
+      - USB3_SPARE
+      - FAN_HEADER
+      - PCIE_FFC
+      - CAM_DISP
+    pinlabels:
+      - Physical pin 2 / 5V
+      - Physical pin 4 / 5V
+      - Physical pin 6 / GND
+      - Physical pin 14 / GND
+      - USB-C power VBUS
+      - USB-C power GND
+      - Black USB 2.0 / Due VBUS
+      - Black USB 2.0 / Due D-
+      - Black USB 2.0 / Due D+
+      - Black USB 2.0 / Due GND
+      - Other black USB 2.0 / hub VBUS
+      - Other black USB 2.0 / hub D-
+      - Other black USB 2.0 / hub D+
+      - Other black USB 2.0 / hub GND
+      - Blue USB 3.0 / lidar VBUS
+      - Blue USB 3.0 / lidar D-
+      - Blue USB 3.0 / lidar D+
+      - Blue USB 3.0 / lidar GND
+      - Other blue USB 3.0 / spare
+      - Managed 4-pin fan interface
+      - Managed PCIe FFC interface
+      - CAM/DISP complete interface
+    notes: Logical USB labels identify device assignments; mark the selected physical sockets during assembly.
+
+  DUE1:
+    type: Arduino Due
+    subtype: Programming micro-USB port
+    pins: [VBUS, D_MINUS, D_PLUS, GND]
+    pinlabels: [VBUS, D-, D+, GND]
+    notes: This link supplies Due power and carries bidirectional serial data.
+
+  HUB1:
+    type: "Owned Adafruit #2998 USB Mini Hub with Power Switch"
+    subtype: Bus-powered 4-port USB 2.0 hub with captive USB-A upstream lead
+    pins:
+      - UP_VBUS
+      - UP_D_MINUS
+      - UP_D_PLUS
+      - UP_GND
+      - P1_VBUS
+      - P1_D_MINUS
+      - P1_D_PLUS
+      - P1_GND
+      - PORT_2
+      - PORT_3
+      - PORT_4
+      - DC_5V
+    pinlabels:
+      - Upstream VBUS
+      - Upstream D-
+      - Upstream D+
+      - Upstream GND
+      - Port 1 VBUS
+      - Port 1 D-
+      - Port 1 D+
+      - Port 1 GND
+      - Spare complete USB port
+      - Spare complete USB port
+      - Spare complete USB port
+      - 1.35 mm external-power jack / UNUSED
+    pincolors: [RD, WH, GN, BK, RD, WH, GN, BK, "", "", "", RD]
+    notes: The single switch controls all four downstream ports. Leave the external-power jack unused because it is tied directly to USB 5 V and can back-feed the Pi. The hub adds ports, not power budget.
+
+  A954:
+    type: "Adafruit #954 USB-to-TTL serial converter cable"
+    pins:
+      - USB_VBUS
+      - USB_D_MINUS
+      - USB_D_PLUS
+      - USB_GND
+      - TTL_RED
+      - TTL_BLACK
+      - TTL_WHITE_RX
+      - TTL_GREEN_TX
+    pinlabels:
+      - USB VBUS
+      - USB D-
+      - USB D+
+      - USB GND
+      - Red / 5V output
+      - Black / ground
+      - White / RX into USB
+      - Green / TX from USB
+    notes: Active USB-to-UART conversion occurs inside this cable; USB and TTL signals are not direct nets.
+    ignore_in_bom: true
+
+  BNO1:
+    type: Adafruit BNO055
+    subtype: UART-mode breakout
+    pins: [1, 2, 3, 4, 5, 6]
+    pinlabels: [VIN, GND, SDA / UART TX, SCL / UART RX, 3VO, PS1]
+    pincolors: [RD, BK, WH, GN, RD, RD]
+    loops:
+      - [5, 6]
+    notes: One owned female-to-female Elegoo/Dupont jumper from 3VO to PS1 selects UART mode; PS0 remains at its default LOW state. Do not connect a STEMMA QT cable while UART mode is selected.
+
+  COOL1:
+    type: Owned Raspberry Pi Active Cooler
+    subtype: Supplied four-wire fan plug and lead
+    pincount: 1
+    pinlabels: [Complete managed fan interface]
+    notes: Use the cooler's supplied lead intact; a STEMMA QT cable is not a substitute even though both use small four-pin shells.
+    ignore_in_bom: true
+
+  HAT1:
+    type: Owned Raspberry Pi M.2 HAT+
+    subtype: Installed PCIe-to-M.2 adapter
+    pins: [PCIE_FFC, M2_SOCKET]
+    pinlabels: [Complete Pi PCIe interface, Complete M.2 M-key socket]
+    notes: This already-operating assembly is shown as managed connectors, not field-wired individual conductors.
+    ignore_in_bom: true
+
+  SSD1:
+    type: Owned Raspberry Pi NVMe SSD
+    subtype: M.2 M-key edge connector
+    pincount: 1
+    pinlabels: [Complete M.2 edge interface]
+    ignore_in_bom: true
+
+  CAM1:
+    type: Raspberry Pi Camera Module 3
+    subtype: 15-pin camera connector
+    pincount: 1
+    pinlabels: [Complete managed camera interface]
+    notes: The FFC is treated as an indivisible assembly, not as field-wired conductors.
+    ignore_in_bom: true
+
+  LIDAR1:
+    type: Future RPLidar A1M8 development kit
+    subtype: Supplied USB adapter
+    pins: [VBUS, D_MINUS, D_PLUS, GND]
+    pinlabels: [USB VBUS, USB D-, USB D+, USB GND]
+    notes: Future connection; add only after the Pi 5 A source and USB budget are validated.
+    ignore_in_bom: true
+
+cables:
+  W_P6_PI_HEADER:
+    type: Four owned Elegoo/Dupont jumper leads - P6 Pi power
+    wirecount: 4
+    colors: [RD, RD, BK, BK]
+    wirelabels: [5V_A, 5V_B, GND_A, GND_B]
+    notes: Use two positive and two return leads of equal short length, at most about 12 inches. Cut/strip the DROK ends and use the correct mating ends at H1; reject on heat or voltage drop.
+    ignore_in_bom: true
+
+  CBL_P0_USBC:
+    type: P0 official USB-C power connection
+    wirecount: 2
+    colors: [RD, BK]
+    wirelabels: [MANAGED_VBUS, GND]
+    notes: Logical power representation of the complete USB-C cable; do not field-wire it.
+    ignore_in_bom: true
+
+  CBL_P7_DUE_USB:
+    type: P7 data-capable USB-A to micro-B cable
+    wirecount: 4
+    colors: [RD, WH, GN, BK]
+    wirelabels: [VBUS, D_MINUS, D_PLUS, GND]
+    notes: Internal colors are diagram conventions, not field-wiring instructions.
+    ignore_in_bom: true
+
+  CBL_HUB_UPSTREAM:
+    type: "#2998 captive USB-A upstream cable"
+    wirecount: 4
+    colors: [RD, WH, GN, BK]
+    wirelabels: [VBUS, D_MINUS, D_PLUS, GND]
+    notes: Integral to the owned hub; measure the actual revision's lead length before mounting.
+    ignore_in_bom: true
+
+  W_BNO_TTL:
+    type: "Adafruit #954 TTL flying leads"
+    wirecount: 4
+    colors: [RD, BK, WH, GN]
+    wirelabels: [VIN_5V, GND, USB_RX_FROM_BNO_TX, USB_TX_TO_BNO_RX]
+    notes: Connect the individual female sockets to the BNO055 soldered male header.
+    ignore_in_bom: true
+
+  CBL_COOLER:
+    type: Active Cooler's supplied four-wire lead
+    wirecount: 1
+    colors: [""]
+    wirelabels: [COMPLETE_FAN_LINK]
+    notes: Keep the keyed plug and captive lead intact.
+    ignore_in_bom: true
+
+  CBL_PCIE:
+    type: M.2 HAT+ supplied PCIe FFC
+    wirecount: 1
+    colors: [""]
+    wirelabels: [COMPLETE_PCIE_LINK]
+    notes: Keep the managed high-speed cable intact and verify connector orientation before latching.
+    ignore_in_bom: true
+
+  CBL_M2:
+    type: NVMe M.2 edge connection
+    wirecount: 1
+    colors: [""]
+    wirelabels: [COMPLETE_M2_LINK]
+    notes: Seat and retain the SSD according to the HAT instructions.
+    ignore_in_bom: true
+
+  CBL_CAMERA:
+    type: Standard-to-Mini FFC, 22-pin Pi end to 15-pin camera end
+    wirecount: 1
+    colors: [""]
+    wirelabels: [COMPLETE_FFC]
+    notes: Use the owned unequal-ended cable; the Pi end is 22-pin / 0.5 mm and the camera end is 15-pin / 1 mm. Verify orientation before insertion.
+    ignore_in_bom: true
+
+  CBL_LIDAR_USB:
+    type: Future supplied RPLidar USB connection
+    wirecount: 4
+    colors: [RD, WH, GN, BK]
+    wirelabels: [VBUS, D_MINUS, D_PLUS, GND]
+    notes: Internal colors are logical conventions; use the development kit cable and adapter intact.
+    ignore_in_bom: true
+
+connections:
+  -
+    - PS1: [OUT_POS, OUT_POS, OUT_NEG, OUT_NEG]
+    - W_P6_PI_HEADER: [1, 2, 3, 4]
+    - H1: [2, 4, 6, 14]
+
+  -
+    - H1: [2, 4, 6, 14]
+    - "<-->"
+    - PI1: [HDR_2, HDR_4, HDR_6, HDR_14]
+
+  -
+    - PSU1: [VBUS, GND]
+    - CBL_P0_USBC: [1, 2]
+    - PI1: [USBC_VBUS, USBC_GND]
+
+  -
+    - PI1: [USB2_DUE_VBUS, USB2_DUE_D_MINUS, USB2_DUE_D_PLUS, USB2_DUE_GND]
+    - CBL_P7_DUE_USB: [1, 2, 3, 4]
+    - DUE1: [VBUS, D_MINUS, D_PLUS, GND]
+
+  -
+    - PI1: [USB2_HUB_VBUS, USB2_HUB_D_MINUS, USB2_HUB_D_PLUS, USB2_HUB_GND]
+    - CBL_HUB_UPSTREAM: [1, 2, 3, 4]
+    - HUB1: [UP_VBUS, UP_D_MINUS, UP_D_PLUS, UP_GND]
+
+  -
+    - HUB1: [P1_VBUS, P1_D_MINUS, P1_D_PLUS, P1_GND]
+    - "<-->"
+    - A954: [USB_VBUS, USB_D_MINUS, USB_D_PLUS, USB_GND]
+
+  -
+    - A954: [TTL_RED, TTL_BLACK, TTL_WHITE_RX, TTL_GREEN_TX]
+    - W_BNO_TTL: [1, 2, 3, 4]
+    - BNO1: [1, 2, 3, 4]
+
+  -
+    - PI1: FAN_HEADER
+    - CBL_COOLER: 1
+    - COOL1: 1
+
+  -
+    - PI1: PCIE_FFC
+    - CBL_PCIE: 1
+    - HAT1: PCIE_FFC
+
+  -
+    - HAT1: M2_SOCKET
+    - CBL_M2: 1
+    - SSD1: 1
+
+  -
+    - PI1: CAM_DISP
+    - CBL_CAMERA: 1
+    - CAM1: 1
+
+  -
+    - PI1: [USB3_LIDAR_VBUS, USB3_LIDAR_D_MINUS, USB3_LIDAR_D_PLUS, USB3_LIDAR_GND]
+    - CBL_LIDAR_USB: [1, 2, 3, 4]
+    - LIDAR1: [VBUS, D_MINUS, D_PLUS, GND]

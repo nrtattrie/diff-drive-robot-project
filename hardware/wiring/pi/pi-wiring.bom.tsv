@@ -1,0 +1,7 @@
+Id	Description	Qty	Unit	Designators
+1	Connector, Adafruit BNO055, UART-mode breakout, 6 pins	1		BNO1
+2	Connector, Arduino Due, Programming micro-USB port, 4 pins	1		DUE1
+3	Connector, DROK 5.10 V converter, 2 pins	1		PS1
+4	Connector, Owned 2x20 extra-tall female 0.1-inch stacking header, 23 mm GPIO extension; four used contacts shown, 4 pins	1		H1
+5	Connector, Owned Adafruit #2998 USB Mini Hub with Power Switch, Bus-powered 4-port USB 2.0 hub with captive USB-A upstream lead, 12 pins	1		HUB1
+6	Connector, Raspberry Pi 5, Power and external interfaces, 22 pins	1		PI1

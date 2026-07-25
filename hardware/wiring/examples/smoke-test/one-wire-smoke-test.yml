@@ -1,0 +1,26 @@
+metadata:
+  title: WireViz local installation smoke test
+
+connectors:
+  SOURCE:
+    type: Test source
+    pincount: 1
+    pinlabels: [OUT]
+
+  LOAD:
+    type: Test load
+    pincount: 1
+    pinlabels: [IN]
+
+cables:
+  W_TEST:
+    gauge: 22 AWG
+    length: 0.1
+    wirecount: 1
+    colors: [RD]
+
+connections:
+  -
+    - SOURCE: 1
+    - W_TEST: 1
+    - LOAD: 1

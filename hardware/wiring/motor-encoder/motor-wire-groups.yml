@@ -1,0 +1,103 @@
+metadata:
+  title: Diff-drive robot motor and encoder wire groups
+  description: "Both Pololu #4753 six-wire assemblies and their motor-power, encoder-power, and encoder-signal destinations."
+  notes: |
+    Each #4753 motor and encoder is one physical six-wire assembly.
+    Use the owned factory 20 cm cable; the 1x6 housing is 2.54 mm pitch, not JST-SH.
+    Wire colors identify the factory leads; shared-housing cavity numbers and order are not yet verified.
+    Red-to-A and black-to-B are the initial motor-terminal assignments only.
+    The unloaded direction test determines whether either motor pair must be reversed.
+
+options:
+  color_mode: FULL
+
+connectors:
+  M1:
+    type: "Left Pololu #4753 motor and encoder"
+    subtype: Owned 20 cm cable / shared 1x6 female 2.54 mm housing
+    pins: [RED, BLACK, BLUE, GREEN, YELLOW, WHITE]
+    pinlabels: [Motor lead, Motor lead, Encoder +5V, Encoder GND, Encoder channel A, Encoder channel B]
+    pincolors: [RD, BK, BU, GN, YE, WH]
+    notes: Pin identifiers are wire colors, not unverified connector cavity numbers. The owned 5-pin JST-SH cables do not mate this housing.
+    ignore_in_bom: true
+
+  M2:
+    type: "Right Pololu #4753 motor and encoder"
+    subtype: Owned 20 cm cable / shared 1x6 female 2.54 mm housing
+    pins: [RED, BLACK, BLUE, GREEN, YELLOW, WHITE]
+    pinlabels: [Motor lead, Motor lead, Encoder +5V, Encoder GND, Encoder channel A, Encoder channel B]
+    pincolors: [RD, BK, BU, GN, YE, WH]
+    notes: Pin identifiers are wire colors, not unverified connector cavity numbers. The owned 5-pin JST-SH cables do not mate this housing.
+    ignore_in_bom: true
+
+  DRV1:
+    type: Pololu Dual VNH5019 motor driver
+    subtype: "#2507 motor-output terminals"
+    pins: [M1A, M1B, M2A, M2B]
+    pinlabels: [Left terminal A, Left terminal B, Right terminal A, Right terminal B]
+    pincolors: [RD, BK, RD, BK]
+    notes: Motor outputs are bidirectional; B terminals are not ground. Land stripped factory red/black leads directly in the supplied 5 mm screw terminals.
+
+  DUE1:
+    type: Arduino Due
+    subtype: Encoder power rails
+    pins: [5V, GND]
+    pinlabels: [5V output, Logic ground]
+    pincolors: [RD, BK]
+    notes: Both encoders share these rails through short soldered carrier wiring and owned low-current jumpers.
+
+  U1:
+    type: "Adafruit #735 74LVC245 encoder level translator"
+    subtype: Encoder-side A inputs
+    pins: [2, 3, 4, 5]
+    pinlabels: [A1 / left A, A2 / left B, A3 / right A, A4 / right B]
+    pincolors: [YE, WH, YE, WH]
+    notes: Only the four motor-harness inputs are shown; translator power, control, and Due-side outputs belong to the logic harness on the owned Mega prototype-shield carrier.
+
+cables:
+  W_M1_FACTORY:
+    type: "Owned left #4753 factory six-wire group"
+    wirecount: 6
+    colors: [RD, BK, BU, GN, YE, WH]
+    wirelabels: [MOTOR_RED, MOTOR_BLACK, ENC_5V, ENC_GND, ENC_A, ENC_B]
+    notes: "Red/black leave the shared housing by depinning or cutting/stripping for M1. Keep blue/green/yellow/white in the housing if practical and mate them to a marked 1x6 male header segment cut from the #2507-supplied 0.1-inch breakaway strip on the carrier; the two motor-lead header positions stay unconnected."
+    ignore_in_bom: true
+
+  W_M2_FACTORY:
+    type: "Owned right #4753 factory six-wire group"
+    wirecount: 6
+    colors: [RD, BK, BU, GN, YE, WH]
+    wirelabels: [MOTOR_RED, MOTOR_BLACK, ENC_5V, ENC_GND, ENC_A, ENC_B]
+    notes: "Red/black leave the shared housing by depinning or cutting/stripping for M2. Keep blue/green/yellow/white in the housing if practical and mate them to a marked 1x6 male header segment cut from the #2507-supplied 0.1-inch breakaway strip on the carrier; the two motor-lead header positions stay unconnected."
+    ignore_in_bom: true
+
+connections:
+  -
+    - M1: [RED, BLACK]
+    - W_M1_FACTORY: [1, 2]
+    - DRV1: [M1A, M1B]
+
+  -
+    - M1: [BLUE, GREEN]
+    - W_M1_FACTORY: [3, 4]
+    - DUE1: [5V, GND]
+
+  -
+    - M1: [YELLOW, WHITE]
+    - W_M1_FACTORY: [5, 6]
+    - U1: [2, 3]
+
+  -
+    - M2: [RED, BLACK]
+    - W_M2_FACTORY: [1, 2]
+    - DRV1: [M2A, M2B]
+
+  -
+    - M2: [BLUE, GREEN]
+    - W_M2_FACTORY: [3, 4]
+    - DUE1: [5V, GND]
+
+  -
+    - M2: [YELLOW, WHITE]
+    - W_M2_FACTORY: [5, 6]
+    - U1: [4, 5]

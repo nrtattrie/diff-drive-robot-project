@@ -1,0 +1,6 @@
+Id	Description	Qty	Unit	Designators
+1	Connector, Arduino Due, Encoder interface pins, 7 pins	1		DUE1
+2	Connector, Owned 0.1 uF ceramic capacitor, 104 decoupling capacitor, 2 pins	1		C1
+3	Connector, Owned Adafruit #735 74LVC245 octal bus transceiver, 3.3V translator in #2204 socket on Mega prototype carrier, 20 pins	1		U1
+4	Owned Adafruit #2204 20-pin IC socket	1		U1
+5	Owned Arduino Mega Prototype Shield V3, Translator and encoder fanout carrier	1		U1

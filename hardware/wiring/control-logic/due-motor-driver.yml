@@ -1,0 +1,104 @@
+metadata:
+  title: Arduino Due and motor-driver logic
+  description: "Focused P9 and S2-S5 wiring between the Arduino Due and Pololu #2507 logic header."
+  notes: |
+    This focused view is intentionally redundant with control-logic.yml.
+    Use twelve owned Elegoo male-to-female Dupont leads: male at the Due sockets and female at the #2507 header.
+    Jumper colors and installed lengths remain unassigned.
+    Motor supply and motor-output conductors are documented in the power and motor-encoder folders.
+
+options:
+  color_mode: FULL
+
+connectors:
+  DUE1:
+    type: Arduino Due
+    subtype: Motor-control pins
+    pins: [3V3, GND, D6, D7, D8, D9, D10, D11, D22, D23, A0, A1]
+    pinlabels:
+      - Logic 3.3V output
+      - Common logic ground
+      - M1 PWM / PWML7
+      - M2 PWM / PWML6
+      - M1 INA
+      - M1 INB
+      - M2 INA
+      - M2 INB
+      - M1 fault input
+      - M2 fault input
+      - M1 current sense
+      - M2 current sense
+    notes: Set D6/D7 LOW before initialization; D22/D23 are inputs only.
+
+  DRV1:
+    type: "Pololu #2507 Dual VNH5019 motor driver"
+    subtype: Logic header
+    pins: [VDD, GND, M1PWM, M2PWM, M1INA, M1INB, M2INA, M2INB, M1EN_DIAG, M2EN_DIAG, M1CS, M2CS]
+    pinlabels:
+      - 3.3V logic supply
+      - Logic/power common ground
+      - Left PWM
+      - Right PWM
+      - Left direction A
+      - Left direction B
+      - Right direction A
+      - Right direction B
+      - Left enable/fault
+      - Right enable/fault
+      - Left current sense
+      - Right current sense
+    notes: Solder a 13-pin segment of the board-supplied 0.1-inch male breakaway header for separate mounting; do not install Arduino stack headers or ARDVIN=VOUT. PWM has pull-downs; EN/DIAG is fault-active LOW; CS includes onboard 10 kOhm series resistors.
+
+cables:
+  W_DRIVER_LOGIC_POWER:
+    type: P9 owned male-to-female Dupont leads
+    wirecount: 2
+    colors: ["", ""]
+    wirelabels: [VDD_3V3, LOGIC_GND]
+    notes: "Male ends enter Due 3.3V/GND sockets; female ends fit #2507 VDD/GND. Motor return current remains in the high-current branch."
+    ignore_in_bom: true
+
+  W_DRIVER_CONTROL:
+    type: S2/S3 owned male-to-female Dupont leads
+    wirecount: 6
+    colors: ["", "", "", "", "", ""]
+    wirelabels: [M1PWM, M2PWM, M1INA, M1INB, M2INA, M2INB]
+    notes: "Male ends enter the Due sockets; female ends fit the #2507 male header."
+    ignore_in_bom: true
+
+  W_DRIVER_FAULT:
+    type: S4 owned male-to-female Dupont leads
+    wirecount: 2
+    colors: ["", ""]
+    wirelabels: [M1EN_DIAG, M2EN_DIAG]
+    notes: "Male ends enter D22/D23; female ends fit the #2507 header. LOW means fault or disabled; never configure the Due endpoints as outputs."
+    ignore_in_bom: true
+
+  W_DRIVER_CURRENT:
+    type: S5 owned male-to-female Dupont leads
+    wirecount: 2
+    colors: ["", ""]
+    wirelabels: [M1CS, M2CS]
+    notes: "Male ends enter A0/A1; female ends fit the #2507 header. Use the board's existing 10 kOhm resistors; add no clamps."
+    ignore_in_bom: true
+
+connections:
+  -
+    - DUE1: [3V3, GND]
+    - W_DRIVER_LOGIC_POWER: [1, 2]
+    - DRV1: [VDD, GND]
+
+  -
+    - DUE1: [D6, D7, D8, D9, D10, D11]
+    - W_DRIVER_CONTROL: [1, 2, 3, 4, 5, 6]
+    - DRV1: [M1PWM, M2PWM, M1INA, M1INB, M2INA, M2INB]
+
+  -
+    - DRV1: [M1EN_DIAG, M2EN_DIAG]
+    - W_DRIVER_FAULT: [1, 2]
+    - DUE1: [D22, D23]
+
+  -
+    - DRV1: [M1CS, M2CS]
+    - W_DRIVER_CURRENT: [1, 2]
+    - DUE1: [A0, A1]

@@ -1,0 +1,232 @@
+metadata:
+  title: Diff-drive robot main power path
+  description: Battery through protected distribution, motor-driver and Pi branches, and Pi-to-Due USB.
+  notes: |
+    Design definition only; these connections are not yet electrically validated.
+    P1 battery connector and undervoltage protection remain battery-selection dependent.
+    Owned 16 AWG wire, fuse parts, ALITOVE splices, Pi header extender, and jumper leads are assigned below.
+    Cable lengths are intentionally omitted until physical component placement is known.
+
+options:
+  color_mode: FULL
+
+connectors:
+  BAT1:
+    type: Future 3S battery
+    pincount: 2
+    pinlabels: [BAT+, BAT-]
+    pincolors: [RD, BK]
+    notes: 11.1 V nominal, 12.6 V fully charged; exact battery is not selected.
+    ignore_in_bom: true
+
+  J1_BAT:
+    type: Future keyed battery connector
+    subtype: Battery-side half
+    pincount: 2
+    pinlabels: [BAT+, BAT-]
+    pincolors: [RD, BK]
+    notes: Exact polarized connector family is not selected.
+    ignore_in_bom: true
+
+  J1_ROBOT:
+    type: Future keyed battery connector
+    subtype: Robot-side half / manual disconnect
+    pincount: 2
+    pinlabels: [BAT+, BAT-]
+    pincolors: [RD, BK]
+    notes: Exact polarized connector family is not selected.
+    ignore_in_bom: true
+
+  F1:
+    type: Owned waterproof medium inline fuse holder
+    subtype: 14 AWG / standard ATO-ATC / 10 A fuse
+    pincount: 2
+    pinlabels: [IN, FUSED OUT]
+    pincolors: [RD, RD]
+    loops:
+      - [1, 2]
+    notes: Install nearest practical point to battery positive; use stripped wire and weatherproof the completed joins.
+    additional_components:
+      - type: Owned standard blade fuse from 80-piece kit
+        subtype: 10 A ATO/ATC
+        qty: 1
+
+  TB1_POS:
+    type: Owned ALITOVE 3-wire splice connector
+    subtype: Fused-positive distribution
+    pinlabels: [Fuse output, Driver branch, Converter branch]
+    pincolors: [RD, RD, RD]
+    pincount: 3
+    loops:
+      - [1, 2]
+      - [1, 3]
+    notes: Use one piece only if continuity proves all three selected ports are common; otherwise replace with a known-common 3-port lever connector.
+
+  TB1_NEG:
+    type: Owned ALITOVE 3-wire splice connector
+    subtype: Battery-negative distribution
+    pinlabels: [Battery negative, Driver return, Converter return]
+    pincolors: [BK, BK, BK]
+    pincount: 3
+    loops:
+      - [1, 2]
+      - [1, 3]
+    notes: Use a separate piece from positive. Verify the intended three-port common topology before wiring.
+
+  DRV1:
+    type: Pololu Dual VNH5019 motor driver
+    subtype: "#2507 power terminal"
+    pins: [VIN, GND]
+    pinlabels: [VIN, Power ground]
+    pincolors: [RD, BK]
+    notes: Land stripped 16 AWG copper directly in the supplied 5 mm screw terminal; do not tin wire compressed by the screw.
+
+  PS1:
+    type: DROK 5.10 V converter
+    pins: [IN_POS, IN_NEG, OUT_POS, OUT_NEG]
+    pinlabels: [IN+, IN-, OUT+, OUT-]
+    pincolors: [RD, BK, RD, BK]
+    notes: Land stripped 16 AWG input wire directly in the screw terminals. Exact-unit input rating and common-ground behavior require bench verification.
+
+  H1:
+    type: Owned 2x20 extra-tall female 0.1-inch stacking header
+    subtype: 23 mm Pi GPIO extension; four used contacts shown
+    pins: [2, 4, 6, 14]
+    pinlabels: [5V pin 2, 5V pin 4, GND pin 6, GND pin 14]
+    pincolors: [RD, RD, BK, BK]
+    notes: One header exposes these contacts through the M.2 HAT+ stack. Confirm actual fit, pin numbering, and jumper gender before power.
+
+  PI1:
+    type: Raspberry Pi 5
+    subtype: Power header below H1 and direct USB-A host port
+    pins: [2, 4, 6, 14, USB_VBUS, USB_D_MINUS, USB_D_PLUS, USB_GND]
+    pinlabels: [GPIO 5V, GPIO 5V, GPIO GND, GPIO GND, USB VBUS, USB D-, USB D+, USB GND]
+    pincolors: [RD, RD, BK, BK, RD, WH, GN, BK]
+    notes: Never connect USB-C power while the DROK header feed is connected.
+
+  DUE1:
+    type: Arduino Due
+    subtype: Programming micro-USB port
+    pins: [USB_VBUS, USB_D_MINUS, USB_D_PLUS, USB_GND]
+    pinlabels: [VBUS, D-, D+, GND]
+    pincolors: [RD, WH, GN, BK]
+    notes: Connect to only one powered USB host.
+
+cables:
+  W_BAT_LEADS:
+    type: Battery-supplied leads; gauge and length TBD
+    wirecount: 2
+    colors: [RD, BK]
+    wirelabels: [BAT_POS, BAT_NEG]
+    notes: Red and black are the planned polarity colors; verify the selected battery before connection.
+    ignore_in_bom: true
+
+  W_P1_TRUNK:
+    type: Owned 16 AWG silicone wire - P1 unfused battery trunk
+    gauge: 16 AWG
+    wirecount: 2
+    colors: [RD, BK]
+    wirelabels: [UNFUSED_POS, BAT_NEG]
+    notes: Keep the unfused positive segment as short as practical; actual red/black stock and available length require inspection.
+    ignore_in_bom: true
+
+  W_P1_FUSED_POS:
+    type: Owned 16 AWG silicone wire - P1 fused positive
+    gauge: 16 AWG
+    wirecount: 1
+    colors: [RD]
+    wirelabels: [FUSED_POS]
+    ignore_in_bom: true
+
+  W_P2_DRIVER:
+    type: Owned 16 AWG silicone wire - P2 motor-driver branch
+    gauge: 16 AWG
+    wirecount: 2
+    colors: [RD, BK]
+    wirelabels: [FUSED_POS, BAT_NEG]
+    ignore_in_bom: true
+
+  W_P5_DROK_IN:
+    type: Owned 16 AWG silicone wire - P5 converter input branch
+    gauge: 16 AWG
+    wirecount: 2
+    colors: [RD, BK]
+    wirelabels: [FUSED_POS, BAT_NEG]
+    ignore_in_bom: true
+
+  W_P6_PI_HEADER:
+    type: Four owned Elegoo/Dupont jumper leads - P6 Pi power
+    wirecount: 4
+    colors: [RD, RD, BK, BK]
+    wirelabels: [5V_A, 5V_B, GND_A, GND_B]
+    notes: Use two positive and two return leads of equal short length, at most about 12 inches. Cut/strip the DROK ends and use the correct mating ends at H1; reject on heat or voltage drop.
+    ignore_in_bom: true
+
+  CBL_P7_USB:
+    type: P7 data-capable USB-A to micro-B cable
+    wirecount: 4
+    colors: [RD, WH, GN, BK]
+    wirelabels: [VBUS, D_MINUS, D_PLUS, GND]
+    notes: Carries Pi-Due power and bidirectional serial data; internal colors are diagram conventions, not field-wiring instructions.
+    ignore_in_bom: true
+
+connections:
+  -
+    - BAT1: [1, 2]
+    - W_BAT_LEADS: [1, 2]
+    - J1_BAT: [1, 2]
+
+  -
+    - J1_BAT: [1, 2]
+    - "<-->"
+    - J1_ROBOT: [1, 2]
+
+  -
+    - J1_ROBOT: 1
+    - W_P1_TRUNK: 1
+    - F1: 1
+
+  -
+    - J1_ROBOT: 2
+    - W_P1_TRUNK: 2
+    - TB1_NEG: 1
+
+  -
+    - F1: 2
+    - W_P1_FUSED_POS: 1
+    - TB1_POS: 1
+
+  -
+    - TB1_POS: 2
+    - W_P2_DRIVER: 1
+    - DRV1: VIN
+
+  -
+    - TB1_NEG: 2
+    - W_P2_DRIVER: 2
+    - DRV1: GND
+
+  -
+    - TB1_POS: 3
+    - W_P5_DROK_IN: 1
+    - PS1: IN_POS
+
+  -
+    - TB1_NEG: 3
+    - W_P5_DROK_IN: 2
+    - PS1: IN_NEG
+
+  -
+    - PS1: [OUT_POS, OUT_POS, OUT_NEG, OUT_NEG]
+    - W_P6_PI_HEADER: [1, 2, 3, 4]
+    - H1: [2, 4, 6, 14]
+
+  -
+    - H1: [2, 4, 6, 14]
+    - "<-->"
+    - PI1: [2, 4, 6, 14]
+
+  -
+    - PI1: [USB_VBUS, USB_D_MINUS, USB_D_PLUS, USB_GND]
+    - CBL_P7_USB: [1, 2, 3, 4]
+    - DUE1: [USB_VBUS, USB_D_MINUS, USB_D_PLUS, USB_GND]

@@ -1,0 +1,285 @@
+metadata:
+  title: Due, motor-driver, and encoder control logic
+  description: "Complete installed control and feedback wiring among the Arduino Due, Pololu #2507, both #4753 encoders, and 74LVC245 translator."
+  notes: |
+    This diagram covers P8, P9, and S2 through S7.
+    Use the owned Mega Prototype Shield V3 as the translator carrier, one #2204 socket, one #735, and owned Elegoo/Dupont leads.
+    Logic jumper colors and installed lengths are not yet assigned, so non-factory conductors render neutrally.
+    Encoder outputs are 5 V on the translator A side and must never connect directly to the 3.3 V-only Due.
+    Driver B motor terminals are not logic ground; motor power wiring is documented separately.
+
+options:
+  color_mode: FULL
+
+connectors:
+  DUE1:
+    type: Arduino Due
+    subtype: Installed power, control, and feedback pins
+    pins:
+      - 5V
+      - 3V3
+      - GND
+      - D2
+      - D13
+      - D5
+      - D4
+      - D6
+      - D7
+      - D8
+      - D9
+      - D10
+      - D11
+      - D22
+      - D23
+      - A0
+      - A1
+    pinlabels:
+      - Encoder 5V output
+      - Logic 3.3V output
+      - Common logic ground
+      - Left encoder A / TIOA0
+      - Left encoder B / TIOB0
+      - Right encoder A / TIOA6
+      - Right encoder B / TIOB6
+      - M1 PWM / PWML7
+      - M2 PWM / PWML6
+      - M1 INA
+      - M1 INB
+      - M2 INA
+      - M2 INB
+      - M1 fault input
+      - M2 fault input
+      - M1 current sense
+      - M2 current sense
+    notes: Set D6 and D7 LOW before direction/control initialization; D22 and D23 are inputs only.
+
+  DRV1:
+    type: "Pololu #2507 Dual VNH5019 motor driver"
+    subtype: Logic header
+    pins:
+      - VDD
+      - GND
+      - M1PWM
+      - M2PWM
+      - M1INA
+      - M1INB
+      - M2INA
+      - M2INB
+      - M1EN_DIAG
+      - M2EN_DIAG
+      - M1CS
+      - M2CS
+    pinlabels:
+      - 3.3V logic supply
+      - Logic/power common ground
+      - Left PWM
+      - Right PWM
+      - Left direction A
+      - Left direction B
+      - Right direction A
+      - Right direction B
+      - Left enable/fault
+      - Right enable/fault
+      - Left current sense
+      - Right current sense
+    notes: Solder a 13-pin segment of the board-supplied 0.1-inch male breakaway header for separate mounting; do not install Arduino stack headers or ARDVIN=VOUT. PWM has pull-downs; EN/DIAG is fault-active LOW; CS includes onboard 10 kOhm series resistors.
+
+  ENC_L:
+    type: "Left #4753 encoder"
+    subtype: Logical view of the shared six-wire motor assembly
+    pins: [BLUE, GREEN, YELLOW, WHITE]
+    pinlabels: [Encoder +5V, Encoder GND, Encoder A, Encoder B]
+    pincolors: [BU, GN, YE, WH]
+    notes: "Factory wire colors, not verified cavity numbers. The retained 1x6 female housing may mate a marked 1x6 segment cut from the #2507-supplied male header on the carrier."
+    ignore_in_bom: true
+
+  ENC_R:
+    type: "Right #4753 encoder"
+    subtype: Logical view of the shared six-wire motor assembly
+    pins: [BLUE, GREEN, YELLOW, WHITE]
+    pinlabels: [Encoder +5V, Encoder GND, Encoder A, Encoder B]
+    pincolors: [BU, GN, YE, WH]
+    notes: "Factory wire colors, not verified cavity numbers. The retained 1x6 female housing may mate a marked 1x6 segment cut from the #2507-supplied male header on the carrier."
+    ignore_in_bom: true
+
+  U1:
+    type: "Owned Adafruit #735 74LVC245 octal bus transceiver"
+    subtype: "3.3V encoder level translator in #2204 socket on Mega prototype carrier"
+    pins: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    pinlabels:
+      - DIR / tie to 3.3V
+      - A1 / left encoder A
+      - A2 / left encoder B
+      - A3 / right encoder A
+      - A4 / right encoder B
+      - A5 / tie to GND
+      - A6 / tie to GND
+      - A7 / tie to GND
+      - A8 / tie to GND
+      - GND
+      - B8 / leave unconnected
+      - B7 / leave unconnected
+      - B6 / leave unconnected
+      - B5 / leave unconnected
+      - B4 / right encoder B
+      - B3 / right encoder A
+      - B2 / left encoder B
+      - B1 / left encoder A
+      - /OE / tie to GND
+      - VCC / 3.3V
+    notes: "Install in one owned #2204 20-pin socket soldered to the owned Mega Prototype Shield V3 after checking its rail layout. Pins 11-14 remain open; DIR HIGH selects A-to-B; /OE LOW enables outputs."
+    additional_components:
+      - type: "Owned Adafruit #2204 20-pin IC socket"
+        qty: 1
+      - type: Owned Arduino Mega Prototype Shield V3
+        subtype: Translator and encoder fanout carrier
+        qty: 1
+
+  C1:
+    type: Owned 0.1 uF ceramic capacitor
+    subtype: "104 decoupling capacitor"
+    pins: [1, 2]
+    pinlabels: [VCC side, GND side]
+    notes: Mount directly across U1 pins 20 and 10.
+
+cables:
+  W_LOGIC_3V3:
+    type: P9 owned Dupont leads plus short soldered carrier wiring
+    wirecount: 3
+    colors: ["", "", ""]
+    wirelabels: [DRIVER_VDD, U1_VCC, U1_DIR]
+    notes: Supplied by the Due 3.3V rail. Use the correct male ends at the Due; keep carrier straps short.
+    ignore_in_bom: true
+
+  W_LOGIC_GND:
+    type: Owned Dupont leads plus short soldered common-ground carrier wiring
+    wirecount: 7
+    colors: ["", "", "", "", "", "", ""]
+    wirelabels: [DRIVER_GND, U1_GND, U1_OE, U1_A5_GND, U1_A6_GND, U1_A7_GND, U1_A8_GND]
+    notes: Joins Due logic ground to the driver and translator without carrying motor return current; keep local U1 straps on the carrier.
+    ignore_in_bom: true
+
+  W_ENCODER_POWER:
+    type: P8 factory encoder conductors through retained 1x6 housings
+    wirecount: 4
+    colors: [BU, GN, BU, GN]
+    wirelabels: [LEFT_5V, LEFT_GND, RIGHT_5V, RIGHT_GND]
+    ignore_in_bom: true
+
+  W_ENCODER_A_SIDE:
+    type: S6 factory encoder conductors through retained 1x6 housings
+    wirecount: 4
+    colors: [YE, WH, YE, WH]
+    wirelabels: [LEFT_A_5V, LEFT_B_5V, RIGHT_A_5V, RIGHT_B_5V]
+    notes: Mate to marked 1x6 male header segments on the carrier only after verifying housing order; these 5V signals terminate only at U1 A1-A4.
+    ignore_in_bom: true
+
+  W_U1_DUE_ENCODERS:
+    type: S7 owned male-ended Dupont leads from carrier to Due
+    wirecount: 4
+    colors: ["", "", "", ""]
+    wirelabels: [LEFT_A_3V3, LEFT_B_3V3, RIGHT_A_3V3, RIGHT_B_3V3]
+    ignore_in_bom: true
+
+  W_DRIVER_CONTROL:
+    type: S2/S3 owned male-to-female Dupont leads
+    wirecount: 6
+    colors: ["", "", "", "", "", ""]
+    wirelabels: [M1PWM, M2PWM, M1INA, M1INB, M2INA, M2INB]
+    notes: "Male ends enter the Due sockets; female ends fit the #2507 male logic header."
+    ignore_in_bom: true
+
+  W_DRIVER_FAULT:
+    type: S4 owned male-to-female Dupont leads
+    wirecount: 2
+    colors: ["", ""]
+    wirelabels: [M1EN_DIAG, M2EN_DIAG]
+    notes: "Male ends enter the Due sockets; female ends fit the #2507 header. Configure Due endpoints as inputs only; LOW means fault or disabled."
+    ignore_in_bom: true
+
+  W_DRIVER_CURRENT:
+    type: S5 owned male-to-female Dupont leads
+    wirecount: 2
+    colors: ["", ""]
+    wirelabels: [M1CS, M2CS]
+    notes: "Male ends enter A0/A1; female ends fit the #2507 header. The board's existing 10 kOhm series resistors are sufficient; add no clamps."
+    ignore_in_bom: true
+
+  W_C1:
+    type: U1 short soldered carrier connection
+    wirecount: 2
+    colors: ["", ""]
+    wirelabels: [VCC, GND]
+    notes: Keep both connections as short as practical at U1 pins 20 and 10.
+    ignore_in_bom: true
+
+connections:
+  -
+    - DUE1: 3V3
+    - W_LOGIC_3V3: 1
+    - DRV1: VDD
+
+  -
+    - DUE1: 3V3
+    - W_LOGIC_3V3: 2
+    - U1: 20
+
+  -
+    - DUE1: 3V3
+    - W_LOGIC_3V3: 3
+    - U1: 1
+
+  -
+    - DUE1: GND
+    - W_LOGIC_GND: 1
+    - DRV1: GND
+
+  -
+    - DUE1: [GND, GND, GND, GND, GND, GND]
+    - W_LOGIC_GND: [2, 3, 4, 5, 6, 7]
+    - U1: [10, 19, 6, 7, 8, 9]
+
+  -
+    - DUE1: [5V, GND]
+    - W_ENCODER_POWER: [1, 2]
+    - ENC_L: [BLUE, GREEN]
+
+  -
+    - DUE1: [5V, GND]
+    - W_ENCODER_POWER: [3, 4]
+    - ENC_R: [BLUE, GREEN]
+
+  -
+    - ENC_L: [YELLOW, WHITE]
+    - W_ENCODER_A_SIDE: [1, 2]
+    - U1: [2, 3]
+
+  -
+    - ENC_R: [YELLOW, WHITE]
+    - W_ENCODER_A_SIDE: [3, 4]
+    - U1: [4, 5]
+
+  -
+    - U1: [18, 17, 16, 15]
+    - W_U1_DUE_ENCODERS: [1, 2, 3, 4]
+    - DUE1: [D2, D13, D5, D4]
+
+  -
+    - DUE1: [D6, D7, D8, D9, D10, D11]
+    - W_DRIVER_CONTROL: [1, 2, 3, 4, 5, 6]
+    - DRV1: [M1PWM, M2PWM, M1INA, M1INB, M2INA, M2INB]
+
+  -
+    - DRV1: [M1EN_DIAG, M2EN_DIAG]
+    - W_DRIVER_FAULT: [1, 2]
+    - DUE1: [D22, D23]
+
+  -
+    - DRV1: [M1CS, M2CS]
+    - W_DRIVER_CURRENT: [1, 2]
+    - DUE1: [A0, A1]
+
+  -
+    - U1: [20, 10]
+    - W_C1: [1, 2]
+    - C1: [1, 2]

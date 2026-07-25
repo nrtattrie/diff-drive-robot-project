@@ -1,0 +1,4 @@
+Id	Description	Qty	Unit	Designators
+1	Connector, Adafruit #735 74LVC245 encoder level translator, Encoder-side A inputs, 4 pins	1		U1
+2	Connector, Arduino Due, Encoder power rails, 2 pins	1		DUE1
+3	Connector, Pololu Dual VNH5019 motor driver, #2507 motor-output terminals, 4 pins	1		DRV1
